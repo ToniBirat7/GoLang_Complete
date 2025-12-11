@@ -1,5 +1,9 @@
 ## **Resources**
 
+**PyTesseract**
+
+[Playlist](https://www.youtube.com/playlist?list=PLHgvmbajt-ByUdTiXe3Epzm1k2TIZAesg)
+
 **Tesseract OCR**
 
 [Go_Tesseract](https://github.com/otiai10/gosseract)
