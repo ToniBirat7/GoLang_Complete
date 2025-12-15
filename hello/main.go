@@ -1,15 +1,22 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
-func sum(nums ...int) int {
-	total := 0
-	for _, num := range nums {
-		total += num
+func closure() func() int {
+	count := 0
+
+	return func() int {
+		count += 1
+		return count
 	}
-	return total
 }
 
 func main() {
-	fmt.Println(sum(1, 2, 3, 4, 5))
+	fn := closure()
+
+	fmt.Println(fn())
+	fmt.Println(fn())
+	fmt.Println(fn())
 }
