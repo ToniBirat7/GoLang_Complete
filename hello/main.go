@@ -2,22 +2,29 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 type order struct {
-	id     string
-	amount float32
-	status string
-	// createdAt time.Time // Nanosecond precision
+	id        string
+	amount    float32
+	status    string
+	createdAt time.Time // Nanosecond precision
+}
+
+func (o *order) updateStatus(newStatus string) {
+	o.status = newStatus
 }
 
 func main() {
 	myOrder := order{
-		id:     "123",
-		amount: 1200.00,
-		status: "received",
-		// createdAt: time.Now(),
+		id:        "123",
+		amount:    1200.00,
+		status:    "received",
+		createdAt: time.Now(),
 	}
 
-	fmt.Println("Order Struct", myOrder)
+	fmt.Println("Initial Order Status:", myOrder.status)
+	myOrder.updateStatus("shipped")
+	fmt.Println("Updated Order Status:", myOrder.status)
 }
