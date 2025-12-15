@@ -3,13 +3,11 @@ package main
 import "fmt"
 
 func main() {
-	// Array
-	var nums [4]int
+	// Maps
+	person := make(map[string]string)
 
-	tensor := [2][2]int{{1, 2}, {3, 4}}
+	// Add
+	person["name"] = "aaaaaaa"
 
-	nums[0] = 1
-	nums[2] = 2
-
-	fmt.Println(tensor)
+	fmt.Println(person["name"])
 }
