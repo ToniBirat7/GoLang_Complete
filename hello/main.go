@@ -6,8 +6,12 @@ func main() {
 	// Maps
 	person := make(map[string]string)
 
+	payload := map[string]int{"person": 40}
+
 	// Add
 	person["name"] = "aaaaaaa"
 
-	fmt.Println(person["name"])
+	k, ok := payload["person"]
+
+	fmt.Println(k, ok)
 }
