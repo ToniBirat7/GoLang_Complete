@@ -4,19 +4,15 @@ import (
 	"fmt"
 )
 
-func closure() func() int {
-	count := 0
-
-	return func() int {
-		count += 1
-		return count
-	}
+func changeNum(num int) {
+	num = 5
+	fmt.Println("In ChangeNum : ", num)
 }
 
 func main() {
-	fn := closure()
+	num := 1
 
-	fmt.Println(fn())
-	fmt.Println(fn())
-	fmt.Println(fn())
+	changeNum(num)
+
+	fmt.Println("After ChangeNum : ", num)
 }
