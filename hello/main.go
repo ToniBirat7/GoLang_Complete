@@ -2,15 +2,14 @@ package main
 
 import "fmt"
 
-func applyOperation(a int, b int, operation func(int, int) int) int {
-	return operation(a, b)
-}
-
-func add(a int, b int) int {
-	return a + b
+func sum(nums ...int) int {
+	total := 0
+	for _, num := range nums {
+		total += num
+	}
+	return total
 }
 
 func main() {
-	result := applyOperation(2, 3, add)
-	fmt.Println(result)
+	fmt.Println(sum(1, 2, 3, 4, 5))
 }
