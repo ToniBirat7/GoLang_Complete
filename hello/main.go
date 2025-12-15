@@ -26,7 +26,7 @@ func (pp PayPal) ProcessPayment(amount float32) string {
 
 func processPayment(method PaymentMethod, amount float32) {
 	result := method.ProcessPayment(amount)
-	fmt.Println(result)	
+	fmt.Println(result)
 }
 
 func main() {
