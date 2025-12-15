@@ -2,17 +2,23 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
-func changeNum(num *int) {
-	fmt.Println("In ChangeNum : ", *num)
-	*num = 5 // Derefencing
+type order struct {
+	id        string
+	amount    float32
+	status    string
+	createdAt time.Time // Nanosecond precision
 }
 
 func main() {
-	num := 1
+	order := order{
+		id:        "123",
+		amount:    1200.00,
+		status:    "received",
+		createdAt: time.Now(),
+	}
 
-	changeNum(&num)
-
-	fmt.Println("After ChangeNum : ", num)
+	fmt.Println("Order Struct", order)
 }
