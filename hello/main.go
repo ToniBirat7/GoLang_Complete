@@ -2,16 +2,11 @@ package main
 
 import "fmt"
 
+func add(a, b int) int {
+	return a + b
+}
+
 func main() {
-	// Maps
-	person := make(map[string]string)
-
-	payload := map[string]int{"person": 40}
-
-	// Add
-	person["name"] = "aaaaaaa"
-
-	k, ok := payload["person"]
-
-	fmt.Println(k, ok)
+	sum := add(2, 3)
+	fmt.Println(sum)
 }
