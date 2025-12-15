@@ -16,6 +16,10 @@ func (o *order) updateStatus(newStatus string) {
 	o.status = newStatus
 }
 
+func (o *order) getAmount() float32 {
+	return o.amount
+}
+
 func main() {
 	myOrder := order{
 		id:        "123",
@@ -27,4 +31,6 @@ func main() {
 	fmt.Println("Initial Order Status:", myOrder.status)
 	myOrder.updateStatus("shipped")
 	fmt.Println("Updated Order Status:", myOrder.status)
+
+	fmt.Println("Amount is : ", myOrder.getAmount())
 }
