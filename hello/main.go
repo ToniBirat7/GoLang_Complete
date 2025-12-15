@@ -16,7 +16,7 @@ func (o *order) updateStatus(newStatus string) {
 	o.status = newStatus
 }
 
-func (o *order) getAmount() float32 {
+func (o order) getAmount() float32 {
 	return o.amount
 }
 
