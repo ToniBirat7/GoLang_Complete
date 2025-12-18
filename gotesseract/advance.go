@@ -27,7 +27,7 @@ type Article struct {
 }
 
 func main() {
-	imagePath := "nep4.png" // Ensure this matches your filename exactly
+	imagePath := "bar.png" // Ensure this matches your filename exactly
 
 	// 1. Load Image
 	file, err := os.Open(imagePath)
