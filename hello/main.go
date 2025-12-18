@@ -1,8 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
-func printSlice(items []int) {
+func printSlice[T any](items []T) {
 	for _, item := range items {
 		fmt.Println(item)
 	}
@@ -10,4 +12,5 @@ func printSlice(items []int) {
 
 func main() {
 	printSlice([]int{1, 2, 3, 4})
+	printSlice([]string{"1", "2", "3", "4"})
 }
