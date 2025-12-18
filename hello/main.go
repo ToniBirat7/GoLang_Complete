@@ -4,33 +4,34 @@ import (
 	"fmt"
 )
 
-type order struct {
-	id     string
-	amount float32
-	status string
-	// createdAt time.Time
+type PaymentMethod interface {
+	ProcessPayment(amount float32) string
 }
 
-func (o *order) getStatus() string {
-	return o.status
+type CreditCard struct {
+	cardNumber string
 }
 
-func (o *order) changeStatus(status string) {
-	o.status = status
+func (cc CreditCard) ProcessPayment(amount float32) string {
+	return fmt.Sprintf("Processing credit card payment of $%.2f using card number %s", amount, cc.cardNumber)
 }
 
-func NewOrder(id string, amount float32, status string) *order {
-	return &order{
-		id:     id,
-		amount: amount,
-		status: status,
-	}
+type PayPal struct {
+	email string
+}
+
+func (cc PayPal) ProcessPayment(amount float32) string {
+	return fmt.Sprintf("Processing PayPal card payment of $%.2f using card number %s", amount, cc.email)
+}
+
+func processPayment(method PaymentMethod, amount float32) {
+	result := method.ProcessPayment(amount)
+	fmt.Println(result)
 }
 
 func main() {
-	myOrder2 := NewOrder("1", 200.0, "no")
-
-	myOrder2.changeStatus("Yes")
-
-	fmt.Println(myOrder2.getStatus())
+	cc := CreditCard{cardNumber: "1234-5678"}
+	pp := PayPal{email: "hi@"}
+	processPayment(cc, 100.0)
+	processPayment(pp, 50.0)
 }
