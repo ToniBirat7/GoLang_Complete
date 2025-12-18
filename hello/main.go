@@ -19,6 +19,15 @@ func (o *order) changeStatus(status string) {
 	o.status = status
 }
 
+func (o *order) NewOrder(id string, amount float32, status string) *order {
+
+	return &order{
+		id:     id,
+		amount: amount,
+		status: status,
+	}
+}
+
 func main() {
 	myOrder := order{
 		id:     "1",
