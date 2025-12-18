@@ -1,0 +1,11 @@
+[0] Para (Lines: 1): नारा)  | Confidence: 32.03
+[1] Para (Lines: 1): नेपाल बार एशोसिएसन  | Confidence: 96.08
+[2] Para (Lines: 1): रामशाहपथ, कारुमाडौ  | Confidence: 60.01
+[3] Para (Lines: 1): र 1  | Confidence: 25.01
+[4] Para (Lines: 2): | ं  सामाजिक सुरक्षा कोष  | Confidence: 72.42
+[5] Para (Lines: 1): थापाथली, काठमाडौं  | Confidence: 45.22
+[6] Para (Lines: 1): बिच भएको  | Confidence: 92.38
+[7] Para (Lines: 1): |  | Confidence: 67.02
+[8] Para (Lines: 3): " कोषबाट सञ्चालित योगदानमा आधारित सामाजिक सुरक्षा योजना सञ्चालनका लागि  गरिएको समझदारी पत्र" ं  (राणा एणाो 000 डाडा ए।9) ं  | Confidence: 63.18
+[9] Para (Lines: 1): । चा ट२ बचाउन 11  | Confidence: 18.36
+[10] Para (Lines: 2): |  । व क हेन कामताहेरलमममिकमसहिलमकपतमामकिनम्मेमममा 000०) 0 नर] पद  | Confidence: 28.66
