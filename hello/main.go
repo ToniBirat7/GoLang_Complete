@@ -4,7 +4,11 @@ import (
 	"fmt"
 )
 
-func printSlice[T any](items []T) {
+type Number interface {
+	int | string
+}
+
+func printSlice[T Number](items []T) {
 	for _, item := range items {
 		fmt.Println(item)
 	}
