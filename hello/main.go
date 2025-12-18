@@ -28,13 +28,6 @@ func NewOrder(id string, amount float32, status string) *order {
 }
 
 func main() {
-	// myOrder := order{
-	// 	id:     "1",
-	// 	amount: 200.0,
-	// 	status: "no",
-	// }
-	// fmt.Println(myOrder)
-
 	myOrder2 := NewOrder("1", 200.0, "no")
 
 	myOrder2.changeStatus("Yes")
