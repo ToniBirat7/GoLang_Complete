@@ -19,8 +19,7 @@ func (o *order) changeStatus(status string) {
 	o.status = status
 }
 
-func (o *order) NewOrder(id string, amount float32, status string) *order {
-
+func NewOrder(id string, amount float32, status string) *order {
 	return &order{
 		id:     id,
 		amount: amount,
@@ -29,14 +28,16 @@ func (o *order) NewOrder(id string, amount float32, status string) *order {
 }
 
 func main() {
-	myOrder := order{
-		id:     "1",
-		amount: 200.0,
-		status: "no",
-	}
+	// myOrder := order{
+	// 	id:     "1",
+	// 	amount: 200.0,
+	// 	status: "no",
+	// }
 	// fmt.Println(myOrder)
 
-	myOrder.changeStatus("Yes")
+	myOrder2 := NewOrder("1", 200.0, "no")
 
-	fmt.Println(myOrder.getStatus())
+	myOrder2.changeStatus("Yes")
+
+	fmt.Println(myOrder2.getStatus())
 }
