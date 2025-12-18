@@ -2,18 +2,18 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"sync"
 )
 
-func blockingTask(id int) {
-	fmt.Printf("Goroutine %d: Starting blocking task\n", id)
-	time.Sleep(2 * time.Second) // Simulating a blocking operation
-	fmt.Printf("Goroutine %d: Completed blocking task\n", id)
+func task(id int, w *sync.WaitGroup) {
+	fmt.Println("Doing Task", id)
 }
 
 func main() {
-	for i := 1; i <= 3; i++ {
-		go blockingTask(i)
+	var wg sync.WaitGroup
+
+	for i := 0; i <= 10; i++ {
+		wg.Add(1)
+		go task(i, &wg)
 	}
-	time.Sleep(5 * time.Second) // Sleep to allow Goroutines to complete
 }
