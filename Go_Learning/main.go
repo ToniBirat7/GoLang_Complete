@@ -5,21 +5,19 @@ import (
 	"sync"
 )
 
-func task(id int, wg *sync.WaitGroup) {
-	defer wg.Done()
-	fmt.Println("Doing Task", id)
-}
-
 var wg sync.WaitGroup
+
+func task(numChan chan int) {
+	fmt.Println("Received Value is : ", <-numChan)
+}
 
 func main() {
 
-	for i := 0; i <= 10; i++ {
-		wg.Add(1)
-		go task(i, &wg)
-	}
+	messageChan := make(chan int)
 
-	fmt.Println("Completed")
+	go task(messageChan)
+
+	messageChan <- 5
 
 	wg.Wait()
 }
