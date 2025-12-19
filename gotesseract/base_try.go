@@ -22,8 +22,8 @@ func main() {
 	client := gosseract.NewClient()
 	defer client.Close()
 
-	client.SetImage("output/bar-11.png")
-	client.SetLanguage("nep", "en")
+	client.SetImage("1.png")
+	client.SetLanguage("nep")
 	client.SetPageSegMode(gosseract.PSM_SINGLE_BLOCK)
 
 	client.SetConfigFile("tsv")

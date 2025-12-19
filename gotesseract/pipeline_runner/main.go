@@ -10,7 +10,7 @@ import (
 
 // Entry point for the pipeline
 func main() {
-	imagesDir := "../output"            // Change if your images are elsewhere
+	imagesDir := "../rajpatra_imgs"     // Change if your images are elsewhere
 	outputRoot := "../pipeline_outputs" // All results go here
 
 	// 1. List all image files in the imagesDir
