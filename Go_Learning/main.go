@@ -10,7 +10,7 @@ func task(id int) {
 	fmt.Println("Doing Task", id)
 }
 
-var wg sync.WaitGroup
+var wg *sync.WaitGroup
 
 func main() {
 
