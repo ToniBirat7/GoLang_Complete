@@ -2,15 +2,12 @@ package main
 
 import (
 	"fmt"
-	"sync"
 )
 
 func task(id int) {
 	defer wg.Done()
 	fmt.Println("Doing Task", id)
 }
-
-var wg *sync.WaitGroup
 
 func main() {
 
