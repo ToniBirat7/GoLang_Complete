@@ -11,13 +11,14 @@ import (
 	"path/filepath"
 	"strings"
 
+	// Ensure image decoders are registered
 	_ "image/jpeg"
 	_ "image/png"
 
 	"github.com/otiai10/gosseract/v2"
 )
 
-// Word-level extraction
+// ExtractWordLevel performs OCR at the word level
 func ExtractWordLevel(imagePath, outputDir string) error {
 	outputFolder := filepath.Join(outputDir, "extraction_results_word_level")
 	outputInfoFile := "words_data.txt"
@@ -28,18 +29,24 @@ func ExtractWordLevel(imagePath, outputDir string) error {
 	client.SetImage(imagePath)
 	client.SetLanguage("nep")
 
+	// Get Word Boxes
 	boundingBoxes, err := client.GetBoundingBoxes(gosseract.RIL_WORD)
 	if err != nil {
 		return err
 	}
+
 	if err := os.MkdirAll(outputFolder, 0755); err != nil {
 		return err
 	}
+
+	// Create Data File
 	txtFile, err := os.Create(filepath.Join(outputFolder, outputInfoFile))
 	if err != nil {
 		return err
 	}
 	defer txtFile.Close()
+
+	// Prepare Image for Drawing
 	srcFile, err := os.Open(imagePath)
 	if err != nil {
 		return err
@@ -49,40 +56,30 @@ func ExtractWordLevel(imagePath, outputDir string) error {
 	if err != nil {
 		return err
 	}
+
 	bounds := srcImg.Bounds()
 	rgbaImg := image.NewRGBA(bounds)
 	draw.Draw(rgbaImg, bounds, srcImg, bounds.Min, draw.Src)
-	boxColor := color.RGBA{255, 0, 0, 255}
+	boxColor := color.RGBA{255, 0, 0, 255} // RED for Words
+
 	for i, box := range boundingBoxes {
-		line := fmt.Sprintf("[%d] Word: %s | Confidence: %.2f\n", i, box.Word, box.Confidence)
-		txtFile.WriteString(line)
+		// Save Raw Data: [Index] || Text || Confidence
+		// We use "||" as a delimiter to make parsing in main.go robust against spaces in text
+		cleanWord := strings.TrimSpace(box.Word)
+		if cleanWord != "" {
+			line := fmt.Sprintf("[%d] || %s || %.2f\n", i, cleanWord, box.Confidence)
+			txtFile.WriteString(line)
+		}
+
+		// Draw Box
 		rect := box.Box
-		for x := rect.Min.X; x < rect.Max.X; x++ {
-			rgbaImg.Set(x, rect.Min.Y, boxColor)
-			rgbaImg.Set(x, rect.Max.Y-1, boxColor)
-			rgbaImg.Set(x, rect.Min.Y+1, boxColor)
-			rgbaImg.Set(x, rect.Max.Y-2, boxColor)
-		}
-		for y := rect.Min.Y; y < rect.Max.Y; y++ {
-			rgbaImg.Set(rect.Min.X, y, boxColor)
-			rgbaImg.Set(rect.Max.X-1, y, boxColor)
-			rgbaImg.Set(rect.Min.X+1, y, boxColor)
-			rgbaImg.Set(rect.Max.X-2, y, boxColor)
-		}
+		drawBox(rgbaImg, rect, boxColor)
 	}
-	finalImgPath := filepath.Join(outputFolder, outputImageFile)
-	f, err := os.Create(finalImgPath)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	if err := png.Encode(f, rgbaImg); err != nil {
-		return err
-	}
-	return nil
+
+	return saveImage(rgbaImg, filepath.Join(outputFolder, outputImageFile))
 }
 
-// Sentence-level extraction
+// ExtractSentenceLevel performs OCR at the line/sentence level
 func ExtractSentenceLevel(imagePath, outputDir string) error {
 	outputFolder := filepath.Join(outputDir, "extraction_results_sentence_level")
 	outputInfoFile := "sentences_data.txt"
@@ -97,14 +94,17 @@ func ExtractSentenceLevel(imagePath, outputDir string) error {
 	if err != nil {
 		return err
 	}
+
 	if err := os.MkdirAll(outputFolder, 0755); err != nil {
 		return err
 	}
+
 	txtFile, err := os.Create(filepath.Join(outputFolder, outputInfoFile))
 	if err != nil {
 		return err
 	}
 	defer txtFile.Close()
+
 	srcFile, err := os.Open(imagePath)
 	if err != nil {
 		return err
@@ -114,45 +114,31 @@ func ExtractSentenceLevel(imagePath, outputDir string) error {
 	if err != nil {
 		return err
 	}
+
 	bounds := srcImg.Bounds()
 	rgbaImg := image.NewRGBA(bounds)
 	draw.Draw(rgbaImg, bounds, srcImg, bounds.Min, draw.Src)
-	boxColor := color.RGBA{0, 0, 255, 255}
+	boxColor := color.RGBA{0, 0, 255, 255} // BLUE for Sentences
+
 	for i, box := range boundingBoxes {
-		line := fmt.Sprintf("[%d] Text: %s | Confidence: %.2f\n", i, box.Word, box.Confidence)
-		txtFile.WriteString(line)
-		rect := box.Box
-		for x := rect.Min.X; x < rect.Max.X; x++ {
-			rgbaImg.Set(x, rect.Min.Y, boxColor)
-			rgbaImg.Set(x, rect.Max.Y-1, boxColor)
-			rgbaImg.Set(x, rect.Min.Y+1, boxColor)
-			rgbaImg.Set(x, rect.Max.Y-2, boxColor)
+		cleanText := strings.TrimSpace(box.Word)
+		if cleanText != "" {
+			line := fmt.Sprintf("[%d] || %s || %.2f\n", i, cleanText, box.Confidence)
+			txtFile.WriteString(line)
 		}
-		for y := rect.Min.Y; y < rect.Max.Y; y++ {
-			rgbaImg.Set(rect.Min.X, y, boxColor)
-			rgbaImg.Set(rect.Max.X-1, y, boxColor)
-			rgbaImg.Set(rect.Min.X+1, y, boxColor)
-			rgbaImg.Set(rect.Max.X-2, y, boxColor)
-		}
+		drawBox(rgbaImg, box.Box, boxColor)
 	}
-	finalImgPath := filepath.Join(outputFolder, outputImageFile)
-	f, err := os.Create(finalImgPath)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	if err := png.Encode(f, rgbaImg); err != nil {
-		return err
-	}
-	return nil
+
+	return saveImage(rgbaImg, filepath.Join(outputFolder, outputImageFile))
 }
 
-// Paragraph-level extraction (custom grouping)
+// ExtractParagraphLevel performs OCR and manually groups lines into paragraphs
 func ExtractParagraphLevel(imagePath, outputDir string) error {
-	outputFolder := filepath.Join(outputDir, "extraction_results_custom_paras")
+	outputFolder := filepath.Join(outputDir, "extraction_results_paragraph_level")
 	outputInfoFile := "custom_paragraphs_data.txt"
 	outputImageFile := "mapped_custom_paragraphs.png"
-	gapThresholdRatio := 0.6
+	// Sensitivity: If gap > 60% of line height, it's a new paragraph
+	gapThresholdRatio := 0.60
 
 	type CustomParagraph struct {
 		Box        image.Rectangle
@@ -166,11 +152,14 @@ func ExtractParagraphLevel(imagePath, outputDir string) error {
 	client.SetImage(imagePath)
 	client.SetLanguage("nep")
 
+	// Get Lines to manually merge
 	lineBoxes, err := client.GetBoundingBoxes(gosseract.RIL_TEXTLINE)
 	if err != nil {
 		return err
 	}
+
 	var paragraphs []CustomParagraph
+
 	if len(lineBoxes) > 0 {
 		currentPara := CustomParagraph{
 			Box:        lineBoxes[0].Box,
@@ -178,11 +167,13 @@ func ExtractParagraphLevel(imagePath, outputDir string) error {
 			Confidence: lineBoxes[0].Confidence,
 			LineCount:  1,
 		}
+
 		for i := 1; i < len(lineBoxes); i++ {
 			prevBox := lineBoxes[i-1].Box
 			currBox := lineBoxes[i].Box
 			lineHeight := currBox.Max.Y - currBox.Min.Y
 			verticalGap := currBox.Min.Y - prevBox.Max.Y
+
 			if float64(verticalGap) > float64(lineHeight)*gapThresholdRatio {
 				paragraphs = append(paragraphs, currentPara)
 				currentPara = CustomParagraph{
@@ -192,19 +183,11 @@ func ExtractParagraphLevel(imagePath, outputDir string) error {
 					LineCount:  1,
 				}
 			} else {
-				if currBox.Min.X < currentPara.Box.Min.X {
-					currentPara.Box.Min.X = currBox.Min.X
-				}
-				if currBox.Min.Y < currentPara.Box.Min.Y {
-					currentPara.Box.Min.Y = currBox.Min.Y
-				}
-				if currBox.Max.X > currentPara.Box.Max.X {
-					currentPara.Box.Max.X = currBox.Max.X
-				}
-				if currBox.Max.Y > currentPara.Box.Max.Y {
-					currentPara.Box.Max.Y = currBox.Max.Y
-				}
+				// Merge Logic: Expand box and append text
+				currentPara.Box = currentPara.Box.Union(currBox)
 				currentPara.Text += " " + lineBoxes[i].Word
+
+				// Average Confidence
 				totalConf := (currentPara.Confidence * float64(currentPara.LineCount)) + lineBoxes[i].Confidence
 				currentPara.LineCount++
 				currentPara.Confidence = totalConf / float64(currentPara.LineCount)
@@ -212,14 +195,17 @@ func ExtractParagraphLevel(imagePath, outputDir string) error {
 		}
 		paragraphs = append(paragraphs, currentPara)
 	}
+
 	if err := os.MkdirAll(outputFolder, 0755); err != nil {
 		return err
 	}
+
 	txtFile, err := os.Create(filepath.Join(outputFolder, outputInfoFile))
 	if err != nil {
 		return err
 	}
 	defer txtFile.Close()
+
 	srcFile, err := os.Open(imagePath)
 	if err != nil {
 		return err
@@ -229,38 +215,63 @@ func ExtractParagraphLevel(imagePath, outputDir string) error {
 	if err != nil {
 		return err
 	}
+
 	bounds := srcImg.Bounds()
 	rgbaImg := image.NewRGBA(bounds)
 	draw.Draw(rgbaImg, bounds, srcImg, bounds.Min, draw.Src)
-	boxColor := color.RGBA{128, 0, 128, 255}
+	boxColor := color.RGBA{0, 128, 0, 255} // GREEN for Paragraphs
+
 	for i, para := range paragraphs {
+		// Flatten text for the data file (remove newlines inside the paragraph string)
 		cleanText := strings.ReplaceAll(para.Text, "\n", " ")
-		line := fmt.Sprintf("[%d] Para (Lines: %d): %s | Confidence: %.2f\n", i, para.LineCount, cleanText, para.Confidence)
-		txtFile.WriteString(line)
-		rect := para.Box
-		minX, minY := int(math.Max(0, float64(rect.Min.X))), int(math.Max(0, float64(rect.Min.Y)))
-		maxX, maxY := int(math.Min(float64(bounds.Max.X), float64(rect.Max.X))), int(math.Min(float64(bounds.Max.Y), float64(rect.Max.Y)))
-		for x := minX; x < maxX; x++ {
-			rgbaImg.Set(x, minY, boxColor)
-			rgbaImg.Set(x, maxY-1, boxColor)
-			rgbaImg.Set(x, minY+1, boxColor)
-			rgbaImg.Set(x, maxY-2, boxColor)
+		cleanText = strings.TrimSpace(cleanText)
+
+		if cleanText != "" {
+			line := fmt.Sprintf("[%d] || %s || %.2f\n", i, cleanText, para.Confidence)
+			txtFile.WriteString(line)
 		}
+		drawBox(rgbaImg, para.Box, boxColor)
+	}
+
+	return saveImage(rgbaImg, filepath.Join(outputFolder, outputImageFile))
+}
+
+// Helper: Draw Box on RGBA Image
+func drawBox(img *image.RGBA, rect image.Rectangle, col color.RGBA) {
+	bounds := img.Bounds()
+	// Safe casting and boundary checks to prevent out-of-bounds panic
+	minX, minY := int(math.Max(0, float64(rect.Min.X))), int(math.Max(0, float64(rect.Min.Y)))
+	maxX, maxY := int(math.Min(float64(bounds.Max.X), float64(rect.Max.X))), int(math.Min(float64(bounds.Max.Y), float64(rect.Max.Y)))
+
+	// Thickness 2px
+	for i := 0; i < 2; i++ {
+		// Horizontal lines
+		for x := minX; x < maxX; x++ {
+			if minY+i < maxY {
+				img.Set(x, minY+i, col)
+			}
+			if maxY-1-i > minY {
+				img.Set(x, maxY-1-i, col)
+			}
+		}
+		// Vertical lines
 		for y := minY; y < maxY; y++ {
-			rgbaImg.Set(minX, y, boxColor)
-			rgbaImg.Set(maxX-1, y, boxColor)
-			rgbaImg.Set(minX+1, y, boxColor)
-			rgbaImg.Set(maxX-2, y, boxColor)
+			if minX+i < maxX {
+				img.Set(minX+i, y, col)
+			}
+			if maxX-1-i > minX {
+				img.Set(maxX-1-i, y, col)
+			}
 		}
 	}
-	finalImgPath := filepath.Join(outputFolder, outputImageFile)
-	f, err := os.Create(finalImgPath)
+}
+
+// Helper: Save Image to file
+func saveImage(img image.Image, path string) error {
+	f, err := os.Create(path)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
-	if err := png.Encode(f, rgbaImg); err != nil {
-		return err
-	}
-	return nil
+	return png.Encode(f, img)
 }
