@@ -5,15 +5,21 @@ import (
 	"sync"
 )
 
-func task(id int, w *sync.WaitGroup) {
+func task(id int) {
+	defer wg.Done()
 	fmt.Println("Doing Task", id)
 }
 
+var wg sync.WaitGroup
+
 func main() {
-	var wg sync.WaitGroup
 
 	for i := 0; i <= 10; i++ {
 		wg.Add(1)
-		go task(i, &wg)
+		go task(i)
 	}
+
+	fmt.Println("Completed")
+
+	wg.Wait()
 }
