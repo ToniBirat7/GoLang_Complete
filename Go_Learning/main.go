@@ -8,24 +8,27 @@ import (
 // It is better to pass WaitGroup by pointer or use a global one
 var wg sync.WaitGroup
 
-func task(id int, numChan chan int) {
+func receiver(numChan chan int) {
 	// 4. This decrements the counter when the function finishes
 	defer wg.Done()
 
 	val := <-numChan
-	fmt.Printf("Goroutine %d received: %d\n", id, val)
+	fmt.Printf("Goroutine received: %d\n", val)
+}
+
+func sender(value int, messageChan chan int) {
+	messageChan <- 5
 }
 
 func main() {
 	messageChan := make(chan int)
 
-	// --- FIRST TASK ---
-	wg.Add(1) // 1. Increment counter BEFORE starting goroutine
-	go task(1, messageChan)
+	wg.Add(1)
+	go receiver(messageChan)
 
-	messageChan <- 5 // 2. Send value (blocks until G1 is ready to receive)
+	wg.Add(1)
+	go sender(5, messageChan)
 
-	// 6. Now Wait() will block because the counter is 2
 	wg.Wait()
 	fmt.Println("Main: All tasks finished.")
 }
