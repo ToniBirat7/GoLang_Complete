@@ -26,9 +26,9 @@ func main() {
 		log.Println("Note: .env file not found, checking system environment variables...")
 	}
 
-	apiKey := os.Getenv("GEMINI_API_KEY")
+	apiKey := os.Getenv("FLASH_API_KEY")
 	if apiKey == "" {
-		log.Fatal("Error: GEMINI_API_KEY environment variable is not set")
+		log.Fatal("Error: FLASH_API_KEY environment variable is not set")
 	}
 
 	ctx := context.Background()
