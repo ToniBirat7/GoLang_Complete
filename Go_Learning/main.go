@@ -1,17 +1,23 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 type post struct {
 	views int
 }
+
+var wg sync.WaitGroup
 
 func (p *post) inc() {
 	p.views += 1
 	fmt.Println("Current Views is : ", p.views)
 }
 
-func callInc(myPost post) {
+func callInc(myPost post, wg *sync.WaitGroup) {
+	defer wg.Done()
 	myPost.inc()
 }
 
@@ -22,6 +28,9 @@ func main() {
 	}
 
 	for i := 0; i <= 10; i++ {
-		go callInc(myPost)
+		wg.Add(1)
+		go callInc(myPost, &wg)
 	}
+
+	wg.Done()
 }
