@@ -59,7 +59,7 @@ func ExtractFromImage(imagePath string, config *OCRConfig) (*OCRResult, error) {
 	}
 
 	result := &OCRResult{
-		Text:              strings.Join(validTexts, "\n"),
+		Text:              strings.Join(validTexts, "\n\n"),
 		AverageConfidence: avgConf,
 		LineCount:         len(cleanedLines),
 	}

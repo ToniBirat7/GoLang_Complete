@@ -24,8 +24,10 @@ FROM alpine:latest
 # Install runtime dependencies
 RUN apk add --no-cache \
     tesseract-ocr \
-    tesseract-ocr-data-nep \
     ca-certificates \
+    curl \
+    && mkdir -p /usr/share/tessdata \
+    && curl -L https://github.com/tesseract-ocr/tessdata/raw/main/nep.traineddata -o /usr/share/tessdata/nep.traineddata \
     && rm -rf /var/cache/apk/*
 
 WORKDIR /app
