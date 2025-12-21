@@ -18,6 +18,9 @@ COPY . .
 # Build the API binary
 RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o ocr-api ./cmd/ocr-api
 
+# Build the CLI binary
+RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o ocr-cli ./cmd/ocr-cli
+
 # Final stage
 FROM alpine:latest
 
@@ -32,8 +35,9 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
-# Copy binary from builder
+# Copy binaries from builder
 COPY --from=builder /app/ocr-api .
+COPY --from=builder /app/ocr-cli .
 
 # Create uploads directory
 RUN mkdir -p /app/uploads

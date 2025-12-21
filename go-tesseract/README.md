@@ -23,169 +23,62 @@ A production-ready Go package for Nepali text extraction using Tesseract OCR. Pr
 go get github.com/ToniBirat7/tesseract_ocr_ne
 ```
 
-### Prerequisites
+## Installation & Usage (Docker Recommended)
 
-- Go 1.23 or higher
-- Tesseract OCR installed
-- Nepali language data for Tesseract
+The easiest way to use this package is via Docker, which includes all dependencies (Tesseract, Nepali language data, etc.).
 
-#### Install Tesseract
-
-**Ubuntu/Debian:**
+### 1. Build the Docker Image
 ```bash
-sudo apt-get update
-sudo apt-get install tesseract-ocr tesseract-ocr-nep libtesseract-dev libleptonica-dev
+docker compose build
 ```
 
-**macOS:**
+### 2. Run the HTTP API
+Start the API server on port 8080:
 ```bash
-brew install tesseract tesseract-lang
+docker compose up -d
 ```
 
-**Windows:**
-Download and install from [Tesseract GitHub](https://github.com/UB-Mannheim/tesseract/wiki)
-
-## Usage
-
-### 1. As a Library
-
-```go
-package main
-
-import (
-    "fmt"
-    "log"
-    
-    "github.com/ToniBirat7/tesseract_ocr_ne/pkg/ocr"
-)
-
-func main() {
-    // Use default configuration
-    config := ocr.DefaultConfig()
-    
-    // Or customize
-    config.IncludeLines = true
-    config.MinConfidence = 50.0
-    
-    // Extract text from image
-    result, err := ocr.ExtractFromImage("path/to/image.png", config)
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    fmt.Printf("Text: %s\n", result.Text)
-    fmt.Printf("Confidence: %.2f%%\n", result.AverageConfidence)
-    fmt.Printf("Lines: %d\n", result.LineCount)
-}
-```
-
-### 2. CLI Tool
-
-Build the CLI:
-```bash
-go build -o ocr-cli ./cmd/ocr-cli
-```
-
-Basic usage:
-```bash
-# Print to stdout
-./ocr-cli -image path/to/image.png
-
-# Save to file
-./ocr-cli -image path/to/image.png -output result.json
-
-# Include individual lines
-./ocr-cli -image path/to/image.png -lines
-
-# Set minimum confidence threshold
-./ocr-cli -image path/to/image.png -min-confidence 60
-```
-
-**CLI Flags:**
-- `-image` (required) - Path to image file
-- `-output` (optional) - Path to output JSON file
-- `-lines` (optional) - Include individual lines in output
-- `-min-confidence` (optional) - Minimum confidence threshold (0-100)
-
-### 3. HTTP API
-
-#### Run Locally
-
-```bash
-go run ./cmd/ocr-api
-```
-
-The API will start on `http://localhost:8080`
-
-#### Endpoints
-
-**GET /** - API information
-```bash
-curl http://localhost:8080/
-```
-
-**GET /health** - Health check
+Test it:
 ```bash
 curl http://localhost:8080/health
 ```
 
-**POST /ocr/extract** - Extract text from image
-```bash
-curl -X POST http://localhost:8080/ocr/extract \
-  -F "image=@path/to/image.png" \
-  -F "include_lines=true"
+### 3. Run the CLI Tool
+Use the helper script `ocr-cli.bat` to run the CLI tool without installing anything locally.
+
+**Usage:**
+```powershell
+.\ocr-cli.bat test_img/img.png
 ```
 
-**Request Parameters:**
-- `image` (required) - Image file (multipart/form-data)
-- `include_lines` (optional) - Set to "true" to include individual lines
+**Or using Docker directly:**
+```bash
+docker run --rm -v ${PWD}:/app/data -t go-tesseract-ocr-api ./ocr-cli -image /app/data/YOUR_IMAGE.png
+```
 
-**Response Example:**
+## API Response Structure
+
 ```json
 {
-  "text": "नेपाली पाठ यहाँ छ",
+  "text": "नेपाली पाठ यहाँ छ\n\nअर्को लाइन",
   "average_confidence": 95.5,
-  "line_count": 3,
-  "lines": [
-    {
-      "text": "नेपाली पाठ",
-      "confidence": 96.2
-    },
-    {
-      "text": "यहाँ छ",
-      "confidence": 94.8
-    }
-  ]
+  "line_count": 2
 }
 ```
 
-### 4. Docker Deployment
+## API Response Structure
 
-#### Using Docker Compose (Recommended)
-
-```bash
-# Build and start
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop
-docker-compose down
+```json
+{
+  "text": "नेपाली पाठ यहाँ छ\n\nअर्को लाइन",
+  "average_confidence": 95.5,
+  "line_count": 2
+}
 ```
 
-#### Using Docker directly
+## Contributing
 
-```bash
-# Build image
-docker build -t go-tesseract-ocr .
-
-# Run container
-docker run -d -p 8080:8080 --name ocr-api go-tesseract-ocr
-
-# Test
-curl http://localhost:8080/health
-```
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## API Response Structure
 
