@@ -32,5 +32,5 @@ func main() {
 		go callInc(myPost, &wg)
 	}
 
-	wg.Done()
+	wg.Wait()
 }
