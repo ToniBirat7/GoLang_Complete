@@ -2,38 +2,24 @@ package main
 
 import (
 	"fmt"
-	"sync"
+	"os"
 )
 
-type post struct {
-	views int
-	mu    sync.Mutex
-}
-
-var wg sync.WaitGroup
-
-func (p *post) inc(wg *sync.WaitGroup) {
-	defer func() {
-		p.mu.Unlock()
-		wg.Done()
-	}()
-
-	p.mu.Lock()
-	p.views += 1
-}
-
 func main() {
-
-	myPost := post{
-		views: 0,
+	f, err := os.Open("example.txt")
+	if err != nil {
+		panic(err)
 	}
 
-	for i := 0; i < 1000; i++ {
-		wg.Add(1)
-		go myPost.inc(&wg)
+	defer f.Close()
+
+	buf := make([]byte, 100)
+
+	d, err := f.Read(buf)
+
+	if err != nil {
+		panic(err)
 	}
 
-	wg.Wait()
-
-	fmt.Println("Final Sum : ", myPost.views)
+	fmt.Println("Data : ", d, string(buf))
 }
