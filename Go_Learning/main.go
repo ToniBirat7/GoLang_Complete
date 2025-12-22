@@ -7,12 +7,18 @@ import (
 
 type post struct {
 	views int
+	mu    sync.Mutex
 }
 
 var wg sync.WaitGroup
 
 func (p *post) inc(wg *sync.WaitGroup) {
-	defer wg.Done()
+	defer func() {
+		p.mu.Unlock()
+		wg.Done()
+	}()
+
+	p.mu.Lock()
 	p.views += 1
 }
 
