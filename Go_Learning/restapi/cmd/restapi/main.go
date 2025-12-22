@@ -1,7 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"net/http"
+
+	"github.com/birat/restapi/internal/config"
+)
 
 func main() {
-	fmt.Println("Welcome to rest api")
+	// load config
+	cfg := config.MustLoad()
+
+	// Setup router
+	router := http.ServeMux()
 }
