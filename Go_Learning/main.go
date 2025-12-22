@@ -1,7 +1,7 @@
 package main
 
-import "first/auth"
+import "github.com/birat/first/auth"
 
 func main() {
-	auth.LoginWithCreds()
+	auth.LoginWithCreds("hi", "secret")
 }
