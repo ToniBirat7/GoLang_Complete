@@ -6,20 +6,17 @@ import (
 )
 
 func main() {
-	f, err := os.Open("example.txt")
+	dir, err := os.Open(".")
 	if err != nil {
 		panic(err)
 	}
 
-	defer f.Close()
+	defer dir.Close()
 
-	buf := make([]byte, 100)
+	fileInfo, err := dir.ReadDir(0)
 
-	d, err := f.Read(buf)
-
-	if err != nil {
-		panic(err)
+	for _, fi := range fileInfo {
+		fmt.Println(fi.Name())
 	}
 
-	fmt.Println("Data : ", d, string(buf))
 }
