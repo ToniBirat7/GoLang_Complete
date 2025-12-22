@@ -1,22 +1,43 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 )
 
 func main() {
-	dir, err := os.Open(".")
+	sourceFile, err := os.Open("example.txt")
+
 	if err != nil {
 		panic(err)
 	}
 
-	defer dir.Close()
+	destFile, err := os.Create("example2.txt")
 
-	fileInfo, err := dir.ReadDir(0)
+	defer sourceFile.Close()
+	defer destFile.Close()
 
-	for _, fi := range fileInfo {
-		fmt.Println(fi.Name())
+	reader := bufio.NewReader(sourceFile)
+	writer := bufio.NewWriter(destFile)
+
+	for {
+		b, err := reader.ReadByte()
+		if err != nil {
+			if err.Error() != "EOF" {
+				panic(err)
+			}
+			break
+		}
+
+		e := writer.WriteByte(b)
+
+		if e != nil {
+			panic(e)
+		}
 	}
 
+	writer.Flush()
+
+	fmt.Print("Completed")
 }
