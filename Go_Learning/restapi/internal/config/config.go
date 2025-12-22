@@ -9,3 +9,7 @@ type Config struct {
 	StoragePath string
 	HTTPServer
 }
+
+func MustLoad() {
+	
+}
