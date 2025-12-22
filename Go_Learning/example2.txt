@@ -1,0 +1,7 @@
+So far, we've read and written files in chunks or all at once. But sometimes, we need to handle large files or continuous data streams where reading or writing everything at once is not feasible.
+
+`Streaming` allows us to process data in smaller, manageable chunks, enabling us to work with large files or continuous data streams without loading everything into memory at once.
+
+Without `Streaming`, if we want to transfer a large file over the network, we would need to read the entire file into memory first and then send it over the network. This can be inefficient and may lead to high memory usage.
+
+To solve this, we can use `Streaming` to read and send the file in smaller chunks. This way, we can start sending data as soon as we read the first chunk, without waiting for the entire file to be loaded into memory.
