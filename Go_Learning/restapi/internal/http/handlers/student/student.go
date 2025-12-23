@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/birat/restapi/internal/types"
+	"github.com/birat/restapi/internal/utils/response"
 )
 
 func NewStudent() http.HandlerFunc {
@@ -19,6 +20,7 @@ func NewStudent() http.HandlerFunc {
 
 		if errors.Is(err, io.EOF) {
 			// JSON Response
+			response.WriteJson(w, http.StatusBadRequest, err.Error())
 		}
 
 		slog.Info("creating a student")
