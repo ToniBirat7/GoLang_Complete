@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -35,7 +34,7 @@ func main() {
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		fmt.Printf("Server Started %s\n", cfg.HTTPServer.Addr)
+		slog.Info("server started at", slog.String("address", cfg.Addr))
 		err := server.ListenAndServe()
 
 		if err != nil {
@@ -47,7 +46,7 @@ func main() {
 	<-done // We are taking out something from the channel
 
 	// Main goroutine executes the code as usual
-	slog.Info("Shutting Down the Server")
+	slog.Info("shutting down server")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
