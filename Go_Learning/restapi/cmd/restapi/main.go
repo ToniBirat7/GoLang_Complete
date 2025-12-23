@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"log/slog"
@@ -8,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/birat/restapi/internal/config"
 )
@@ -47,5 +49,14 @@ func main() {
 	// Main goroutine executes the code as usual
 	slog.Info("Shutting Down the Server")
 
-	server.Shutdown()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	err := server.Shutdown(ctx) // If the server cannot shutdown in the given time returns error
+
+	if err != nil {
+		slog.Error("failed to shutdown", slog.String("error", err.Error()))
+	}
+
+	slog.Info("server shutdown successfully")
 }
