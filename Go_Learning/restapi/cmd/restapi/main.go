@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/birat/restapi/internal/config"
+	"github.com/birat/restapi/internal/http/handlers/student"
 )
 
 func main() {
@@ -19,9 +20,7 @@ func main() {
 
 	// Setup router
 	router := http.NewServeMux()
-	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Welcome to Rest API"))
-	})
+	router.HandleFunc("GET /", student.NewStudent())
 
 	// setup server
 	server := http.Server{
