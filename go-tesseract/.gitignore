@@ -42,3 +42,6 @@ variation_outputs/
 # Environment files
 .env
 .env.local
+
+go.mod
+go.sum
