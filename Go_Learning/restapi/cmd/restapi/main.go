@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -41,7 +42,10 @@ func main() {
 	}()
 
 	// Blocking, Until the Channel is not Notified by Signal
-	<-done
+	<-done // We are taking out something from the channel
 
-	// Code runs as usual 
+	// Main goroutine executes the code as usual
+	slog.Info("Shutting Down the Server")
+
+	server.Shutdown()
 }
