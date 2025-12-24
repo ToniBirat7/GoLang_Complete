@@ -27,6 +27,6 @@ func NewStudent() http.HandlerFunc {
 
 		slog.Info("creating a student")
 
-		response.WriteJson(w, http.StatusCreated, map[string]string{"success": "ok"})
+		response.WriteJson(w, http.StatusCreated, map[string]interface{}{"success": "ok", "student": student})
 	}
 }
