@@ -128,7 +128,7 @@ GitHub: [@ToniBirat7](https://github.com/ToniBirat7)
 ## Acknowledgments
 
 - [Tesseract OCR](https://github.com/tesseract-ocr/tesseract)
-- 
+
 - [gosseract](https://github.com/otiai10/gosseract)
-- 
+
 - [Fiber](https://github.com/gofiber/fiber)
