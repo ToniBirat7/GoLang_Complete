@@ -12,11 +12,21 @@ import (
 
 	"github.com/birat/restapi/internal/config"
 	"github.com/birat/restapi/internal/http/handlers/student"
+	"github.com/birat/restapi/internal/storage/sqlite"
 )
 
 func main() {
 	// load config
 	cfg := config.MustLoad()
+
+	// database setup
+	_, err := sqlite.New(cfg)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	slog.Info("Storage initialized", slog.String("env", cfg.Env), slog.String("version", "1.0.0"))
 
 	// Setup router
 	router := http.NewServeMux()
