@@ -20,7 +20,7 @@ func NewStudent() http.HandlerFunc {
 
 		if errors.Is(err, io.EOF) {
 			// JSON Response
-			response.WriteJson(w, http.StatusBadRequest, err.Error())
+			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
 
 			return
 		}
