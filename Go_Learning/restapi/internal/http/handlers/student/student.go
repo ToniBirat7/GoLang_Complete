@@ -9,6 +9,7 @@ import (
 
 	"github.com/birat/restapi/internal/types"
 	"github.com/birat/restapi/internal/utils/response"
+	vld "github.com/go-playground/validator/v10"
 )
 
 func NewStudent() http.HandlerFunc {
@@ -27,11 +28,16 @@ func NewStudent() http.HandlerFunc {
 
 		if err != nil {
 			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+			return
 		}
 
 		// Validate the data
+		err = vld.New().Struct(student)
 
-		
+		if err != nil {
+			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+			return
+		}
 
 		slog.Info("creating a student")
 
