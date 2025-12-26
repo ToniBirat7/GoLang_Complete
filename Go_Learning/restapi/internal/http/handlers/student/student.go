@@ -35,7 +35,9 @@ func NewStudent() http.HandlerFunc {
 		err = vld.New().Struct(student)
 
 		if err != nil {
-			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+			// Type Casting
+			validateErrs := err.(vld.ValidationErrors)
+			response.WriteJson(w, http.StatusBadRequest, response.ValidationError(validateErrs))
 			return
 		}
 
