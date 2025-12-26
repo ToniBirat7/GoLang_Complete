@@ -25,6 +25,14 @@ func NewStudent() http.HandlerFunc {
 			return
 		}
 
+		if err != nil {
+			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+		}
+
+		// Validate the data
+
+		
+
 		slog.Info("creating a student")
 
 		response.WriteJson(w, http.StatusCreated, map[string]interface{}{"success": "ok", "student": student})
